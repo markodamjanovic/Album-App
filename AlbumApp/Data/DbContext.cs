@@ -5,10 +5,9 @@ using AlbumApp.Models;
 
 namespace AlbumApp.Data
 {
-    public class AlbumContext : IdentityDbContext
+    public class AlbumContext : IdentityDbContext<ApplicationUser>
     {
          public AlbumContext(DbContextOptions<AlbumContext> options): base(options)
          {}
-
     }
 }

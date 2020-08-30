@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 
 using AlbumApp.Data;
+using AlbumApp.Models;
 
 namespace AlbumApp
 {
@@ -28,7 +29,7 @@ namespace AlbumApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AlbumContext>(conn => conn.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
             services.AddControllersWithViews();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
