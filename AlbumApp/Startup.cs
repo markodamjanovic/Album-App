@@ -24,6 +24,7 @@ namespace AlbumApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AlbumContext>(conn => conn.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IAlbumRepository, SQLiteRepository>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
             services.AddControllersWithViews();
         }
