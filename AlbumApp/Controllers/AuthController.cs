@@ -8,13 +8,13 @@ namespace AlbumApp.Controllers
 {
     public class AuthController : Controller
     {   
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -33,11 +33,11 @@ namespace AlbumApp.Controllers
                                                 UserName = model.Email, 
                                                 Email = model.Email};
 
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if(result.Succeeded)
                 {
-                    await signInManager.SignInAsync(user, isPersistent:false);
+                    await _signInManager.SignInAsync(user, isPersistent:false);
                     return RedirectToAction("index", "home");
                 }
                 
@@ -61,7 +61,7 @@ namespace AlbumApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
                 if(result.Succeeded)
                 {
@@ -83,7 +83,7 @@ namespace AlbumApp.Controllers
         [HttpPost]
         public async Task<IActionResult> LogOut()
         {
-            await signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("index", "home");
         }
     }
