@@ -2,7 +2,23 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@inject SignInManager<ApplicationUser> _signInManager;
+
+<div class="row justify-content-center align-items-center">
+    <div class="col-md-4">
+        @if(_signInManager.IsSignedIn(User))
+        {
+            <div> Here will be pictures</div>
+        }
+        else
+        {
+            <div class="row justify-content-center align-items-center">
+              <h1>You are not currently logged in. Login or register!</h1>    
+            </div>
+            <div class="row justify-content-center align-items-center">
+               <a class="nav-link text-dark" asp-area="" asp-controller="auth" asp-action="register">Register</a>
+               <a class="nav-link text-dark" asp-area="" asp-controller="auth" asp-action="login">Login</a>
+            </div>
+        }
+    </div>
 </div>
