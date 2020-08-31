@@ -1,11 +1,11 @@
 
 namespace AlbumApp.Models
 {
-    public class Album
+    public class Photo
     {
         public int Id {get; set;}
-        public int UserId { get; set; }
-        public string PhotoPath { get; set; }
+        public string UserId { get; set; }
+        public string PhotoName { get; set; }
         public string Description { get; set; }
     }
 }

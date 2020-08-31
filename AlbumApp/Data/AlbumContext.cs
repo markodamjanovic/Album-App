@@ -10,6 +10,6 @@ namespace AlbumApp.Data
          public AlbumContext(DbContextOptions<AlbumContext> options): base(options)
          {}
 
-         public DbSet<Album> Album {get; set;}
+         public DbSet<Photo> Album {get; set;}
     }
 }

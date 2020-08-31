@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Http;
+
 namespace AlbumApp.ViewModels
 {
-    public class AlbumViewModel
+    public class PhotoViewModel
     {
         public int UserId { get; set; }
-        //public string PhotoPath { get; set; } this need to be the file
+        public IFormFile Photo {get; set;} 
         public string Description { get; set; }
-
     }
 }
