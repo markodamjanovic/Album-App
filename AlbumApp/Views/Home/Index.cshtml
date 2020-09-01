@@ -1,13 +1,36 @@
-﻿@{
+﻿@model PhotoViewModel;
+@inject SignInManager<ApplicationUser> _signInManager;
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-@inject SignInManager<ApplicationUser> _signInManager;
-
 <div class="row justify-content-center align-items-center">
-    <div class="col-md-4">
+    <div class="col-md-6">
         @if(_signInManager.IsSignedIn(User))
         {
+            <div class="col-md-4 align-items-right">
+            <form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="uploadphoto" >
+                <div class="form-group row">
+                    <div class="input-group">
+                        <input accept=".jpg,.jpeg,.gif,.png" asp-for="Photo" class="form-control custom-file-input"/>
+                        <label asp-for="Photo" class="custom-file-label">Choose Photo</label>
+                    <div asp-validation-summary="All" class="text-danger" ></div>
+                    </div>
+                <button type="submit" class="btn btn-primary"> Add Photo </button>
+                </div>
+                @section Scripts {
+                    <script>
+                        $(document).ready(function (){
+                            $('.custom-file-input').on("change", function () {
+                                var filename = $(this).val().split("\\").pop();
+                                $(this).next('.custom-file-label').html(filename);
+                            })
+                        });
+                    </script>
+                }
+            </form>
+            </div>
             <div> Here will be pictures</div>
         }
         else
