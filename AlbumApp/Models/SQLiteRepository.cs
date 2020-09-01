@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using AlbumApp.ViewModels;
 using AlbumApp.Models;
 
 namespace AlbumApp.Data
@@ -11,18 +10,18 @@ namespace AlbumApp.Data
         {
             _context = context;    
         }
-        public Photo AddPhoto(Photo photo)
+        public void AddPhoto(Photo photo)
         {
             // here will be check if num of photos are > 5 
             // and AlbumViewModel will be as parameter
            var result = _context.Album.Add(photo);
-           return photo;
+            _context.SaveChangesAsync();
         }
 
-        public Photo DeletePhoto(Photo photo)
+        public void DeletePhoto(Photo photo)
         {
             var result = _context.Album.Remove(photo);
-            return photo;
+            _context.SaveChangesAsync();
         }
 
         public IEnumerable<Photo> GetAlbum()

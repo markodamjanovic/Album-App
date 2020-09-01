@@ -45,7 +45,13 @@ namespace AlbumApp.Controllers
                     {
                         uniqueFileName = await _imageHelper.UploadPhoto(model.Photo);
                         _imageHelper.CreateThumbnailImage(uniqueFileName);
-                        _albumRepository.AddPhoto(new Photo {UserId = _userManager.GetUserId(User), PhotoName = uniqueFileName, Description=""});
+                        
+                        Photo newPhoto = new Photo {
+                            UserId = _userManager.GetUserId(User), 
+                            PhotoName = uniqueFileName, 
+                            Description = _imageHelper.GetDescription(uniqueFileName)};
+ 
+                        _albumRepository.AddPhoto(newPhoto);
                     }
                     else
                     {
