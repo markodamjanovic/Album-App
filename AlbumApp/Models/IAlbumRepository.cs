@@ -7,9 +7,8 @@ namespace AlbumApp.Data
 {
     public interface IAlbumRepository
     {
-        IEnumerable<Album> GetAlbum();
-        Album AddPhoto(Album photo);
-        Album DeletePhoto(Album photo);
+        IEnumerable<Photo> GetAlbum();
+        Photo AddPhoto(Photo photo);
+        Photo DeletePhoto(Photo photo);
     }
-
 }
