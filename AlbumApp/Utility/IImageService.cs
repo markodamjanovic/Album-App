@@ -8,5 +8,6 @@ namespace AlbumApp.Utility
         Task<string> UploadPhoto(IFormFile photo);
         void CreateThumbnailImage(string photoName);
         bool ContentTypeValidation(string type);
+        Task<string> GetDescription(string fileName);
     }
 }

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AlbumApp.Utility
 {
@@ -23,10 +25,12 @@ namespace AlbumApp.Utility
         };
 
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IComputerVisionService _computerVision;
 
-        public ImageService(IWebHostEnvironment webHostEnvironment)
+        public ImageService(IWebHostEnvironment webHostEnvironment, IComputerVisionService computerVision)
         {
             _webHostEnvironment = webHostEnvironment;
+            _computerVision = computerVision;
         }
         private string CreateUniqueFileName(string fileName)
         {
@@ -71,9 +75,30 @@ namespace AlbumApp.Utility
             thumb.Save(Path.Combine(GetUploadsFolder(THUMBNAILS_FOLDER), photoName), image.RawFormat);        
         }
 
+        private byte[] GetImageAsByteArray(string imageFilePath)
+        {
+            using (FileStream fileStream = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read))
+            {
+                BinaryReader binaryReader = new BinaryReader(fileStream);
+                return binaryReader.ReadBytes((int)fileStream.Length);
+            }
+        }
         public bool ContentTypeValidation(string type)
         {
             return allowedFileTypes.Contains(type);
+        }
+
+        public async Task<string> GetDescription(string fileName)
+        {
+            string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), fileName);
+            byte[] image = GetImageAsByteArray(filePath);
+            
+            var json = await _computerVision.callAPI(image, "Description");
+            Description description = JsonConvert.DeserializeObject<Description>(JObject.Parse(json)["description"].ToString());
+
+            Caption caption = description.Captions.FirstOrDefault();
+
+            return caption?.Text ?? "";
         }
     }
 }

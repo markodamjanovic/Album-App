@@ -49,7 +49,7 @@ namespace AlbumApp.Controllers
                         Photo newPhoto = new Photo {
                             UserId = _userManager.GetUserId(User), 
                             PhotoName = uniqueFileName, 
-                            Description = _imageHelper.GetDescription(uniqueFileName)};
+                            Description = await _imageHelper.GetDescription(uniqueFileName)};
  
                         _albumRepository.AddPhoto(newPhoto);
                     }
