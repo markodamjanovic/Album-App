@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 using AlbumApp.Data;
 using AlbumApp.Models;
+using AlbumApp.Utility;
 
 namespace AlbumApp
 {
@@ -25,6 +26,7 @@ namespace AlbumApp
         {
             services.AddDbContext<AlbumContext>(conn => conn.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IAlbumRepository, SQLiteRepository>();
+            services.AddScoped<IImageService, ImageService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
             services.AddControllersWithViews();
         }
