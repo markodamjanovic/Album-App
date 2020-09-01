@@ -25,9 +25,15 @@ namespace AlbumApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AlbumContext>(conn => conn.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddScoped<IAlbumRepository, SQLiteRepository>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IComputerVisionService, ComputerVisionService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
+            
+            services.AddOptions();
+            services.Configure<APIConfig>(Configuration.GetSection("ComputerVision"));
+            
             services.AddControllersWithViews();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
