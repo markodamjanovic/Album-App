@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlbumApp.Migrations
 {
     [DbContext(typeof(AlbumContext))]
-    [Migration("20200831201237_InitialCreate")]
+    [Migration("20200901220714_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
