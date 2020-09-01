@@ -11,7 +11,7 @@ namespace AlbumApp.Data
         {
             _context = context;    
         }
-        public Album AddPhoto(Album photo)
+        public Photo AddPhoto(Photo photo)
         {
             // here will be check if num of photos are > 5 
             // and AlbumViewModel will be as parameter
@@ -19,13 +19,13 @@ namespace AlbumApp.Data
            return photo;
         }
 
-        public Album DeletePhoto(Album photo)
+        public Photo DeletePhoto(Photo photo)
         {
             var result = _context.Album.Remove(photo);
             return photo;
         }
 
-        public IEnumerable<Album> GetAlbum()
+        public IEnumerable<Photo> GetAlbum()
         {
             return _context.Album;
         }
