@@ -1,8 +1,14 @@
 ﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+
 using AlbumApp.Models;
+using AlbumApp.ViewModels;
 using AlbumApp.Data;
+using AlbumApp.Utility;
+using System.Threading.Tasks;
 
 namespace AlbumApp.Controllers
 {
@@ -10,16 +16,45 @@ namespace AlbumApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAlbumRepository _albumRepository;
+        private readonly IImageService _imageHelper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IAlbumRepository albumRepository)
+        public HomeController(ILogger<HomeController> logger, IAlbumRepository albumRepository, IImageService imageHelper, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _albumRepository = albumRepository;
+            _imageHelper = imageHelper;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UploadPhoto(PhotoViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                string uniqueFileName = null;
+                if(model.Photo != null)
+                {
+                    if(_imageHelper.ContentTypeValidation(model.Photo.ContentType))
+                    {
+                        uniqueFileName = await _imageHelper.UploadPhoto(model.Photo);
+                        _imageHelper.CreateThumbnailImage(uniqueFileName);
+                        _albumRepository.AddPhoto(new Photo {UserId = _userManager.GetUserId(User), PhotoName = uniqueFileName, Description=""});
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "File type not supported.");
+                    }
+                }                
+            }
+            
+            return RedirectToAction("index", "home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
