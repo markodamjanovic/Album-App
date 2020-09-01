@@ -60,19 +60,20 @@ namespace AlbumApp.Utility
             
             return uniqueFileName;
         }
-
-        public void CreateThumbnailImage(string photoName)
+        
+         public void CreateThumbnailImage(string photoName)
         {   
             int thumbHeight;
             int thumbWidth;
 
             string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), photoName);
-            Image image = Image.FromFile(filePath);
-
-            ScaleImageDimensions(image, MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT, out thumbWidth, out thumbHeight);
-
-            Image thumb = image.GetThumbnailImage(thumbWidth, thumbHeight, ()=>false, IntPtr.Zero);
-            thumb.Save(Path.Combine(GetUploadsFolder(THUMBNAILS_FOLDER), photoName), image.RawFormat);        
+            
+            using(Image image = Image.FromStream(new MemoryStream(GetImageAsByteArray(filePath))))
+            {
+                ScaleImageDimensions(image, MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT, out thumbWidth, out thumbHeight);
+                Image thumb = image.GetThumbnailImage(thumbWidth, thumbHeight, ()=>false, IntPtr.Zero);
+                thumb.Save(Path.Combine(GetUploadsFolder(THUMBNAILS_FOLDER), photoName), image.RawFormat);        
+            }
         }
 
         private byte[] GetImageAsByteArray(string imageFilePath)
@@ -83,6 +84,7 @@ namespace AlbumApp.Utility
                 return binaryReader.ReadBytes((int)fileStream.Length);
             }
         }
+
         public bool ContentTypeValidation(string type)
         {
             return allowedFileTypes.Contains(type);
