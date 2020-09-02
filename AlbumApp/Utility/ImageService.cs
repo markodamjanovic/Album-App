@@ -56,7 +56,11 @@ namespace AlbumApp.Utility
         {   
             string uniqueFileName = CreateUniqueFileName(photo.FileName);
             string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), uniqueFileName);
-            await photo.CopyToAsync(new FileStream(Path.Combine(GetUploadsFolder(IMAGES_FOLDER), uniqueFileName), FileMode.Create));
+            
+            using(FileStream stream = new FileStream(Path.Combine(GetUploadsFolder(IMAGES_FOLDER), uniqueFileName), FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
             
             return uniqueFileName;
         }
@@ -68,7 +72,8 @@ namespace AlbumApp.Utility
 
             string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), photoName);
             
-            using(Image image = Image.FromStream(new MemoryStream(GetImageAsByteArray(filePath))))
+            //using(Image image = Image.FromStream(new MemoryStream(GetImageAsByteArray(filePath))))
+            using(Image image = Image.FromStream(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 ScaleImageDimensions(image, MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT, out thumbWidth, out thumbHeight);
                 Image thumb = image.GetThumbnailImage(thumbWidth, thumbHeight, ()=>false, IntPtr.Zero);
@@ -78,7 +83,7 @@ namespace AlbumApp.Utility
 
         private byte[] GetImageAsByteArray(string imageFilePath)
         {
-            using (FileStream fileStream = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read))
+            using (FileStream fileStream = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 BinaryReader binaryReader = new BinaryReader(fileStream);
                 return binaryReader.ReadBytes((int)fileStream.Length);
