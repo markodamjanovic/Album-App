@@ -16,7 +16,15 @@ a {
 
 .contentcenter { align-content: center;}
 
-.top20 { margin-top:20px; }
+.img-thumbnail{
+  padding: .25rem;
+  background-color: #fff;
+  border: 1.5px solid #080b61;
+  border-radius: .25rem;
+  max-width: 100%;
+  height: auto;
+}
+.top20 { padding-top:10px; }
 
 .btn-primary {
   color: #fff;
