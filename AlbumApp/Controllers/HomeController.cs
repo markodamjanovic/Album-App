@@ -31,7 +31,7 @@ namespace AlbumApp.Controllers
         public IActionResult Index()
         {   
             string userId = _userManager.GetUserId(User);
-            AlbumViewModel model = new AlbumViewModel{ Photos = _albumRepository.GetAlbum().Where(p=> p.UserId == userId) };
+            AlbumViewModel model = new AlbumViewModel{ Photos = _albumRepository.GetAlbum(userId) };
 
             return View(model);
         }
@@ -44,12 +44,25 @@ namespace AlbumApp.Controllers
             {
                 string uniqueFileName = null;
                 if(model.Photo != null)
-                {
+                {   
                     if(_imageHelper.ContentTypeValidation(model.Photo.ContentType))
                     {
                         uniqueFileName = await _imageHelper.UploadPhoto(model.Photo);
                         _imageHelper.CreateThumbnailImage(uniqueFileName);
-                        
+
+                        var userPhotos = _albumRepository.GetAlbum(_userManager.GetUserId(User));
+                        int numOfImages = userPhotos.Count();    
+
+                        if(_imageHelper.NumImagesValidation(numOfImages))
+                        {
+                            string largestFile = _imageHelper.LargestImage(userPhotos.Select(p => p.PhotoName));
+                            Photo deletePhoto = userPhotos.Where(p => p.PhotoName == largestFile).First();
+                            
+                            _albumRepository.DeletePhoto(deletePhoto);
+                            _imageHelper.DeletePhotos(largestFile);
+                        }
+
+
                         Photo newPhoto = new Photo {
                             UserId = _userManager.GetUserId(User), 
                             PhotoName = uniqueFileName, 
