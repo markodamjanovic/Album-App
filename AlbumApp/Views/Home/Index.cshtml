@@ -1,47 +1,57 @@
-﻿@model PhotoViewModel;
+﻿@model AlbumViewModel;
 @inject SignInManager<ApplicationUser> _signInManager;
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="row justify-content-center align-items-center">
-    <div class="col-md-6">
+<div class="container">
         @if(_signInManager.IsSignedIn(User))
-        {
-            <div class="col-md-4 align-items-right">
-            <form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="uploadphoto" >
-                <div class="form-group row">
-                    <div class="input-group">
-                        <input accept=".jpg,.jpeg,.gif,.png" asp-for="Photo" class="form-control custom-file-input"/>
-                        <label asp-for="Photo" class="custom-file-label">Choose Photo</label>
-                    <div asp-validation-summary="All" class="text-danger" ></div>
-                    </div>
-                <button type="submit" class="btn btn-primary"> Add Photo </button>
+        {                       
+                    <div class="row"> 
+                        <div class="col-lg-12">
+                            <form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="uploadphoto" >
+                                <div class="form-inline rowcenter">
+                                    <div class="input-group">
+                                        <input accept=".jpg,.jpeg,.gif,.png" asp-for="Photo" class="form-control custom-file-input"/>
+                                        <label asp-for="Photo" class="custom-file-label">Choose Photo</label>
+                                        <div asp-validation-summary="All" class="text-danger"></div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary"> Add Photo </button>
+                                </div>
+                                @section Scripts {
+                                    <script>
+                                        $(document).ready(function (){
+                                            $('.custom-file-input').on("change", function () {
+                                                var filename = $(this).val().split("\\").pop();
+                                                $(this).next('.custom-file-label').html(filename);
+                                            })
+                                        });
+                                    </script>
+                                }
+                            </form>
+                        </div> 
+                    </div> 
+                    <div class="row top20 justify-content-center"> 
+                        @foreach (var photo in Model.Photos)
+                        {
+                            <div class="col-lg-4 col-sm-12 text-center">
+                                <a href="images/@photo.PhotoName" class="thumbnail">
+                                    <img class="img-thumbnail img-responsive center-block align-center" src="thumbnails/@photo.PhotoName" />
+                                    <p>@photo.Description</p>
+                                </a>
+                            </div>
+                        }
                 </div>
-                @section Scripts {
-                    <script>
-                        $(document).ready(function (){
-                            $('.custom-file-input').on("change", function () {
-                                var filename = $(this).val().split("\\").pop();
-                                $(this).next('.custom-file-label').html(filename);
-                            })
-                        });
-                    </script>
-                }
-            </form>
-            </div>
-            <div> Here will be pictures</div>
         }
         else
         {
             <div class="row justify-content-center align-items-center">
-              <h1>You are not currently logged in. Login or register!</h1>    
+              <h3>You are not currently logged in. Login or register!</h3>    
             </div>
             <div class="row justify-content-center align-items-center">
                <a class="nav-link text-dark" asp-area="" asp-controller="auth" asp-action="register">Register</a>
                <a class="nav-link text-dark" asp-area="" asp-controller="auth" asp-action="login">Login</a>
             </div>
         }
-    </div>
 </div>
