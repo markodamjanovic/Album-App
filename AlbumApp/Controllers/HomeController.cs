@@ -9,6 +9,7 @@ using AlbumApp.ViewModels;
 using AlbumApp.Data;
 using AlbumApp.Utility;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AlbumApp.Controllers
 {
@@ -28,13 +29,16 @@ namespace AlbumApp.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
+        {   
+            string userId = _userManager.GetUserId(User);
+            AlbumViewModel model = new AlbumViewModel{ Photos = _albumRepository.GetAlbum().Where(p=> p.UserId == userId) };
+
+            return View(model);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UploadPhoto(PhotoViewModel model)
+        public async Task<IActionResult> UploadPhoto(AlbumViewModel model)
         {
             if(ModelState.IsValid)
             {
