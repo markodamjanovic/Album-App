@@ -15,8 +15,8 @@ namespace AlbumApp.Utility
     {   
         const string IMAGES_FOLDER = "images";
         const string THUMBNAILS_FOLDER = "thumbnails";
-        const int MAX_THUMB_HEIGHT = 120;
-        const int MAX_THUMB_WIDTH = 120;
+        const int MAX_THUMB_HEIGHT = 250;
+        const int MAX_THUMB_WIDTH = 250;
          List<string> allowedFileTypes = new List<string>()
         {
             "image/jpg",
