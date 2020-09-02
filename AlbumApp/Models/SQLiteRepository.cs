@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AlbumApp.Models;
 
 namespace AlbumApp.Data
@@ -12,8 +13,6 @@ namespace AlbumApp.Data
         }
         public void AddPhoto(Photo photo)
         {
-            // here will be check if num of photos are > 5 
-            // and AlbumViewModel will be as parameter
            var result = _context.Album.Add(photo);
             _context.SaveChangesAsync();
         }
@@ -24,9 +23,16 @@ namespace AlbumApp.Data
             _context.SaveChangesAsync();
         }
 
-        public IEnumerable<Photo> GetAlbum()
-        {
-            return _context.Album;
+        public IEnumerable<Photo> GetAlbum(string userId=null)
+        {   
+            if(userId != null)
+            {
+                return _context.Album.Where(p=> p.UserId == userId);
+            }
+            else
+            {
+                return _context.Album;
+            }
         }
     }
 }
