@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
-
 using AlbumApp.Data;
 using AlbumApp.Models;
 using AlbumApp.Utility;
@@ -30,13 +29,15 @@ namespace AlbumApp
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IComputerVisionService, ComputerVisionService>();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AlbumContext>();
-            
+            services.AddTransient<DBInitializer>();
+
             services.AddOptions();
             services.Configure<APIConfig>(Configuration.GetSection("ComputerVision"));
             
             services.AddControllersWithViews();
         }
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DBInitializer seed)
         {
             if (env.IsDevelopment())
             {
@@ -60,6 +61,9 @@ namespace AlbumApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            seed.SeedUser();
+            seed.SeedAlbum();
         }
     }
 }
