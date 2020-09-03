@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-
 namespace AlbumApp.ViewModels{
 
     public class RegisterViewModel{

@@ -1,4 +1,3 @@
-
 namespace AlbumApp.Models
 {
     public class Photo
