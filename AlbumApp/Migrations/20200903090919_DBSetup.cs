@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AlbumApp.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class DBSetup : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
