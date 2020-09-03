@@ -16,6 +16,8 @@ a {
 
 .contentcenter { align-content: center;}
 
+.button-margin{margin: 5px;}
+
 .img-thumbnail{
   padding: .25rem;
   background-color: #fff;
