@@ -17,6 +17,7 @@ namespace AlbumApp.Utility
         const string THUMBNAILS_FOLDER = "thumbnails";
         const int MAX_THUMB_HEIGHT = 250;
         const int MAX_THUMB_WIDTH = 250;
+        public const int MAX_NUM_OF_IMG = 5;
          List<string> allowedFileTypes = new List<string>()
         {
             "image/jpg",
@@ -42,6 +43,11 @@ namespace AlbumApp.Utility
             return Path.Combine(_webHostEnvironment.WebRootPath, folder);
         }
 
+        private string GetFullImagePath(string folder, string fileName)
+        {
+            return Path.Combine(GetUploadsFolder(folder), fileName);
+        }
+
         private void ScaleImageDimensions(Image image, int maxWidth, int maxHeight, out int newWidth, out int newHeight)
         {
             float ratioX = (float)maxWidth / (float)image.Width;
@@ -55,29 +61,28 @@ namespace AlbumApp.Utility
         public async Task<string> UploadPhoto(IFormFile photo)
         {   
             string uniqueFileName = CreateUniqueFileName(photo.FileName);
-            string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), uniqueFileName);
+            string filePath = GetFullImagePath(IMAGES_FOLDER, uniqueFileName);
             
-            using(FileStream stream = new FileStream(Path.Combine(GetUploadsFolder(IMAGES_FOLDER), uniqueFileName), FileMode.Create))
+            using(FileStream stream = new FileStream(filePath, FileMode.Create))
             {
                 await photo.CopyToAsync(stream);
             }
             
             return uniqueFileName;
         }
-        
-         public void CreateThumbnailImage(string photoName)
+        public void CreateThumbnailImage(string photoName)
         {   
             int thumbHeight;
             int thumbWidth;
 
-            string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), photoName);
+            string filePath = GetFullImagePath(IMAGES_FOLDER, photoName);
+            string saveToPath = GetFullImagePath(THUMBNAILS_FOLDER, photoName);
             
-            //using(Image image = Image.FromStream(new MemoryStream(GetImageAsByteArray(filePath))))
             using(Image image = Image.FromStream(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 ScaleImageDimensions(image, MAX_THUMB_WIDTH, MAX_THUMB_HEIGHT, out thumbWidth, out thumbHeight);
                 Image thumb = image.GetThumbnailImage(thumbWidth, thumbHeight, ()=>false, IntPtr.Zero);
-                thumb.Save(Path.Combine(GetUploadsFolder(THUMBNAILS_FOLDER), photoName), image.RawFormat);        
+                thumb.Save(saveToPath, image.RawFormat);        
             }
         }
 
@@ -97,7 +102,7 @@ namespace AlbumApp.Utility
 
         public async Task<string> GetDescription(string fileName)
         {
-            string filePath = Path.Combine(GetUploadsFolder(IMAGES_FOLDER), fileName);
+            string filePath = GetFullImagePath(IMAGES_FOLDER, fileName);
             byte[] image = GetImageAsByteArray(filePath);
             
             var json = await _computerVision.callAPI(image, "Description");
@@ -106,6 +111,42 @@ namespace AlbumApp.Utility
             Caption caption = description.Captions.FirstOrDefault();
 
             return caption?.Text ?? "";
+        }
+
+        public string LargestImage(IEnumerable<string> fileNames)
+        {   
+            Dictionary<string, long> filesInfo = new Dictionary<string, long>();
+            foreach (string name in fileNames)
+            {
+                string filePath = GetFullImagePath(IMAGES_FOLDER, name);
+                var fileLength = new FileInfo(filePath).Length;
+                filesInfo.Add(filePath, fileLength);
+            }
+
+            long maxSize = filesInfo.Values.Max();
+            string largestFile = filesInfo.FirstOrDefault(file => file.Value ==  maxSize).Key;
+            
+            return largestFile.Split("/").Last();
+        }
+
+        public bool NumImagesValidation(int curentNumOfImages)
+        {
+            return curentNumOfImages == MAX_NUM_OF_IMG;
+        }
+
+        public void DeletePhotos(string photoName)
+        {
+            string imagesFilePath = GetFullImagePath(IMAGES_FOLDER, photoName);
+            string thumbFilePath = GetFullImagePath(THUMBNAILS_FOLDER, photoName);
+            
+            FileInfo imgFile = new FileInfo(imagesFilePath);
+            FileInfo thumbFile = new FileInfo(thumbFilePath);
+
+            if (imgFile.Exists && thumbFile.Exists)
+            {
+                imgFile.Delete();
+                thumbFile.Delete();
+            }
         }
     }
 }

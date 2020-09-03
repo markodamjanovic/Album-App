@@ -56,7 +56,7 @@ namespace AlbumApp.Controllers
                         if(_imageHelper.NumImagesValidation(numOfImages))
                         {
                             string largestFile = _imageHelper.LargestImage(userPhotos.Select(p => p.PhotoName));
-                            Photo deletePhoto = userPhotos.Where(p => p.PhotoName == largestFile).First();
+                            Photo deletePhoto = userPhotos.Where(p => p.PhotoName.Equals(largestFile)).First();
                             
                             _albumRepository.DeletePhoto(deletePhoto);
                             _imageHelper.DeletePhotos(largestFile);
