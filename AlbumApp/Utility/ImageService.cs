@@ -125,8 +125,8 @@ namespace AlbumApp.Utility
 
             long maxSize = filesInfo.Values.Max();
             string largestFile = filesInfo.FirstOrDefault(file => file.Value ==  maxSize).Key;
-            
-            return largestFile.Split("/").Last();
+                        
+            return Path.GetFileName(largestFile);
         }
 
         public bool NumImagesValidation(int curentNumOfImages)
